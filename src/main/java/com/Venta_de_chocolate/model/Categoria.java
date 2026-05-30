@@ -1,10 +1,14 @@
 package com.Venta_de_chocolate.model;
 
-import org.springframework.data.annotation.Id;
+
+
+import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 
@@ -17,10 +21,11 @@ public class Categoria {
     private Long id;
     private String nombre;
     private String descripcion;
-    private String imagenUrl;
     private String estado;
     
-    
+    @OneToMany(mappedBy = "categoria")
+    private List<chocolate> chocolates;
+	
 	public Long getId() {
 		return id;
 	}
@@ -39,12 +44,6 @@ public class Categoria {
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
-	public String getImagenUrl() {
-		return imagenUrl;
-	}
-	public void setImagenUrl(String imagenUrl) {
-		this.imagenUrl = imagenUrl;
-	}
 	public String getEstado() {
 		return estado;
 	}
@@ -52,7 +51,7 @@ public class Categoria {
 		this.estado = estado;
 	}
     
-
-    
+   
+	
     
 }

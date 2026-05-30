@@ -14,7 +14,7 @@ import com.Venta_de_chocolate.service.ICategoriaService;
 
 @Controller
 @RequestMapping("/categorias")
-public class categoriaController {
+public class CategoriaController {
 
     @Autowired
     private ICategoriaService categoriaService;
