@@ -4,8 +4,8 @@ import java.util.List;
 import com.Venta_de_chocolate.model.Categoria;
 
 public interface ICategoriaService {
-    List<Categoria> listarTodas();
-    Categoria buscarPorId(Long id);
-    Categoria guardar(Categoria categoria);
-    void eliminar(Long id);
+    List<Categoria> listarCategorias();
+    void guardarCategoria(Categoria categoria);
+    Categoria buscarPorId(Integer id);
+    void eliminarCategoria(Integer id);
 }

@@ -2,50 +2,71 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Inventario - ChocoStore</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <title>ChocoStore - Tabla de Control</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="container mt-5">
+<body class="bg-light">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>🍫 Inventario General de Chocolates</h2>
-        <a th:href="@{/chocolates/nuevo}" class="btn btn-primary">⚡ Registrar Nuevo Chocolate</a>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand text-warning fw-bold" th:href="@{/}">🍫 ChocoStore</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" th:href="@{/}">Catálogo Principal</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/categoria/nueva}">Categorías</a></li>
+                    <li class="nav-item"><a class="nav-link active" th:href="@{/tabla}">Inventario (Tabla)</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3>Tabla de Control - Inventario</h3>
+            <a th:href="@{/nuevo}" class="btn btn-primary">➕ Agregar Nuevo</a>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+                <table class="table table-striped table-hover mb-0 align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>N°</th>
+                            <th>Imagen</th>
+                            <th>Nombre</th>
+                            <th>Marca</th>
+                            <th>Precio</th>
+                            <th>Categoría</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="choc, iterStat : ${chocolates}">
+                            <td th:text="${iterStat.count}">1</td>
+                            
+                            <td>
+                                <img th:src="${choc.imagen != null && choc.imagen != '' ? choc.imagen : 'https://via.placeholder.com/50'}" 
+                                     alt="Foto" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
+                            </td>
+                            
+                            <td th:text="${choc.nombre}" class="fw-bold">Nombre</td>
+                            <td th:text="${choc.marca}">Marca</td>
+                            <td th:text="'$' + ${#numbers.formatDecimal(choc.precio, 1, 2)}">$0.00</td>
+                            <td th:text="${choc.categoria != null} ? ${choc.categoria.nombre} : 'Sin categoría'">Categoría</td>
+                            
+                            <td class="text-center">
+                                <a th:href="@{/editar/{id}(id=${choc.id})}" class="btn btn-sm btn-warning me-1">Editar</a>
+                                <a th:href="@{/eliminar/{id}(id=${choc.id})}" class="btn btn-sm btn-danger" 
+                                   onclick="return confirm('¿Seguro que desea eliminar este producto?')">Eliminar</a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(chocolates)}">
+                            <td colspan="7" class="text-center text-muted py-4">No hay productos guardados todavía.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-
-    <table class="table table-striped table-hover align-middle shadow-sm">
-        <thead class="table-dark">
-            <tr>
-                <th>ID</th>
-                <th>Imagen</th>
-                <th>Nombre</th>
-                <th>Catálogo / Categoría</th>
-                <th>Precio</th>
-                <th>Stock</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="choc : ${chocolates}">
-                <td th:text="${choc.id}">1</td>
-                <td>
-                    <img th:src="${choc.descripcion != null and choc.descripcion.startsWith('http')} ? ${choc.descripcion} : 'https://images.unsplash.com/photo-1548907040-4d42b321881b?w=100'" 
-                         alt="Chocolate" class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover;">
-                </td>
-                <td th:text="${choc.nombre}" class="fw-bold">Nombre</td>
-                
-                <td>
-                    <span th:text="${choc.categoria != null} ? ${choc.categoria.nombre} : 'Sin Catálogo'" 
-                          class="badge bg-secondary fs-6">Categoría</span>
-                </td>
-                
-                <td th:text="'$' + ${choc.precio}">$0.00</td>
-                <td th:text="${choc.stock}">0</td>
-                <td>
-                    <a th:href="@{/chocolates/editar/{id}(id=${choc.id})}" class="btn btn-sm btn-warning">Editar</a>
-                    <a th:href="@{/chocolates/eliminar/{id}(id=${choc.id})}" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar?')">Eliminar</a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
 </body>
 </html>

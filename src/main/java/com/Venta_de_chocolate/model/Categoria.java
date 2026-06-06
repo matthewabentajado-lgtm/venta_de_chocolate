@@ -1,57 +1,43 @@
 package com.Venta_de_chocolate.model;
 
-
-
-import java.util.List;
-
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-
+import java.util.List;
 
 @Entity
 @Table(name = "categorias")
 public class Categoria {
-	
-	@Id
+
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id; 
+    
     private String nombre;
-    private String descripcion;
-    private String estado;
+
     
-    @OneToMany(mappedBy = "categoria")
-    private List<chocolate> chocolates;
-	
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
-	public String getNombre() {
-		return nombre;
-	}
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
-	public String getDescripcion() {
-		return descripcion;
-	}
-	public void setDescripcion(String descripcion) {
-		this.descripcion = descripcion;
-	}
-	public String getEstado() {
-		return estado;
-	}
-	public void setEstado(String estado) {
-		this.estado = estado;
-	}
+    @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL)
+    private List<Chocolate> chocolates;
+  
+    // Constructores
+    public Categoria() {}
+
+    public Categoria(Integer id, String nombre) {
+        this.id = id;
+        this.nombre = nombre;
+    }
+
+    // Getters y Setters
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
+
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
     
-   
-	
-    
+    public List<Chocolate> getChocolates() { return chocolates; }
+    public void setChocolates(List<Chocolate> chocolates) { this.chocolates = chocolates; }
 }

@@ -1,5 +1,6 @@
 package com.Venta_de_chocolate.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,59 +11,53 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "chocolates")
-public class chocolate {
+public class Chocolate { 
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id; 
+    
     private String nombre;
-    private String descripcion; 
+    
+    private String marca; 
+    
     private Double precio;
-    private Integer stock;
     
-    @ManyToOne
-    @JoinColumn(name = "categoria_id")
-    private Categoria categoria;
-    
-    // Getters y Setters
-    public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
-    public String getNombre() {
-        return nombre;
-    }
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-    public String getDescripcion() { 
-        return descripcion;
-    }
-    
-    // CORRECCIÓN EXTRA: Cambiar de String a void para evitar futuros fallos de conversión
-    public void setDescripcion(String descripcion) { 
-        this.descripcion = descripcion;
-    }
-    public Double getPrecio() {
-        return precio;
-    }
-    public void setPrecio(Double precio) {
-        this.precio = precio;
-    }
-    public Integer getStock() {
-        return stock;
-    }
-    public void setStock(Integer stock) {
-        this.stock = stock;
-    }
+    @Column(length = 500) 
+    private String imagen; 
 
-    // 2. AGREGA EL GETTER Y SETTER DE LA CATEGORÍA
-    public Categoria getCategoria() {
-        return categoria;
-    }
-    public void setCategoria(Categoria categoria) {
+    @ManyToOne
+    @JoinColumn(name = "categoria_id") 
+    private Categoria categoria;
+
+    // Constructores
+    public Chocolate() {}
+
+    public Chocolate(Integer id, String nombre, String marca, Double precio, String imagen, Categoria categoria) {
+        this.id = id;
+        this.nombre = nombre;
+        this.marca = marca;
+        this.precio = precio;
+        this.imagen = imagen;
         this.categoria = categoria;
     }
+
+    // Getters y Setters
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
+
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
+    
+    public String getMarca() { return marca; }
+    public void setMarca(String marca) { this.marca = marca; }
+
+    public Double getPrecio() { return precio; }
+    public void setPrecio(Double precio) { this.precio = precio; }
+    
+    public String getImagen() { return imagen; }
+    public void setImagen(String imagen) { this.imagen = imagen; }
+
+    public Categoria getCategoria() { return categoria; }
+    public void setCategoria(Categoria categoria) { this.categoria = categoria; }
 }

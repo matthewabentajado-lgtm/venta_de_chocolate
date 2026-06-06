@@ -1,20 +1,14 @@
 package com.Venta_de_chocolate.controller;
 
+import com.Venta_de_chocolate.model.Chocolate;
+import com.Venta_de_chocolate.service.IChocolateService;
+import com.Venta_de_chocolate.service.ICategoriaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import com.Venta_de_chocolate.model.chocolate;
-import com.Venta_de_chocolate.service.ICategoriaService;
-import com.Venta_de_chocolate.service.IChocolateService;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/chocolates")
 public class ChocolateController {
 
     @Autowired
@@ -23,40 +17,41 @@ public class ChocolateController {
     @Autowired
     private ICategoriaService categoriaService;
 
-    @GetMapping
-    public String listarChocolates(Model model) {
-        model.addAttribute("chocolates", chocolateService.listarTodos());
-        return "tabla/tabla"; 
-    }
-
+    // Carga el formulario para registrar un nuevo chocolate
     @GetMapping("/nuevo")
-    public String mostrarFormularioNuevo(Model model) {
-        model.addAttribute("chocolate", new chocolate());
-        // ENVIAR EL CATÁLOGO: Es vital para llenar el combobox select del formulario
-        model.addAttribute("listaCategorias", categoriaService.listarTodas());
-        return "chocolate/Chocolate"; 
+    public String nuevoChocolate(Model model) {
+        model.addAttribute("chocolate", new Chocolate());
+        model.addAttribute("categorias", categoriaService.listarCategorias());
+        model.addAttribute("chocolates", chocolateService.listarChocolates()); 
+        return "chocolate/formulario"; 
     }
+    
+    
 
+    // Guarda el registro y vuelve a la tabla
     @PostMapping("/guardar")
-    public String guardarChocolate(@ModelAttribute("chocolate") chocolate choc) {
-        chocolateService.guardar(choc);
-        return "redirect:/inventario"; 
+    public String guardarChocolate(@ModelAttribute Chocolate chocolate) {
+        chocolateService.guardarChocolate(chocolate);
+        return "redirect:/tabla";
     }
 
+    // Carga los datos de un chocolate existente en el formulario para modificarlo
     @GetMapping("/editar/{id}")
-    public String mostrarFormularioEditar(@PathVariable Long id, Model model) {
-        chocolate choc = chocolateService.buscarPorId(id);
-        if (choc == null) {
-            return "redirect:/inventario";
+    public String editarChocolate(@PathVariable Integer id, Model model) {
+        Chocolate chocolate = chocolateService.buscarPorId(id); 
+        if (chocolate != null) {
+            model.addAttribute("chocolate", chocolate);
+            model.addAttribute("categorias", categoriaService.listarCategorias());
+            model.addAttribute("chocolates", chocolateService.listarChocolates()); 
+            return "chocolate/formulario";
         }
-        model.addAttribute("chocolate", choc);
-        model.addAttribute("listaCategorias", categoriaService.listarTodas());
-        return "chocolate/Chocolate"; 
+        return "redirect:/tabla";
     }
 
+    // Elimina el registro y recarga la tabla
     @GetMapping("/eliminar/{id}")
-    public String eliminarChocolate(@PathVariable Long id) {
-        chocolateService.eliminar(id);
-        return "redirect:/inventario";
+    public String eliminarChocolate(@PathVariable Integer id) {
+        chocolateService.eliminarChocolate(id); 
+        return "redirect:/tabla";
     }
 }

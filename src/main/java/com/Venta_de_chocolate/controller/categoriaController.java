@@ -1,60 +1,54 @@
 package com.Venta_de_chocolate.controller;
 
+import com.Venta_de_chocolate.model.Categoria;
+import com.Venta_de_chocolate.service.ICategoriaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import com.Venta_de_chocolate.model.Categoria;
-import com.Venta_de_chocolate.service.ICategoriaService;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/categorias")
+@RequestMapping("/categoria")
 public class CategoriaController {
 
     @Autowired
     private ICategoriaService categoriaService;
 
-    // READ: Listar todas las categorías
-    @GetMapping
-    public String listarCategorias(Model model) {
-        model.addAttribute("categorias", categoriaService.listarTodas());
-        return "listaCategorias"; // Puedes crear esta vista o usar el Home
-    }
-
-    // CREATE (Formulario): Mostrar formulario de nueva categoría
-    @GetMapping("/nuevo")
-    public String mostrarFormularioNuevo(Model model) {
+    // Muestra el formulario y la lista de categorías al mismo tiempo
+    @GetMapping("/nueva")
+    public String nuevaCategoria(Model model) {
         model.addAttribute("categoria", new Categoria());
-        return "formCategoria";
+        model.addAttribute("categorias", categoriaService.listarCategorias()); 
+        return "categoria/Categoria";
     }
 
-    // UPDATE (Formulario): Mostrar formulario para editar
-    @GetMapping("/editar/{id}")
-    public String mostrarFormularioEditar(@PathVariable Long id, Model model) {
-        Categoria categoria = categoriaService.buscarPorId(id);
-        if (categoria == null) {
-            return "redirect:/categorias";
-        }
-        model.addAttribute("categoria", categoria);
-        return "formCategoria";
-    }
-
-    // POST: Guardar o actualizar registro (Procesa el formulario)
+    // Guarda o actualiza la categoría
     @PostMapping("/guardar")
-    public String guardarCategoria(@ModelAttribute("categoria") Categoria categoria) {
-        categoriaService.guardar(categoria);
-        return "redirect:/"; // Redirige al catálogo principal tras guardar
+    public String guardarCategoria(@ModelAttribute Categoria categoria) {
+        categoriaService.guardarCategoria(categoria);
+        return "redirect:/categoria/nueva";
     }
 
-    // DELETE: Eliminar una categoría por ID
+    // Carga los datos al formulario para edición
+    @GetMapping("/editar/{id}")
+    public String editarCategoria(@PathVariable Integer id, Model model) {
+        Categoria categoria = categoriaService.buscarPorId(id); 
+        if (categoria != null) {
+            model.addAttribute("categoria", categoria);
+            model.addAttribute("categorias", categoriaService.listarCategorias());
+            return "categoria/Categoria";
+        }
+        return "redirect:/categoria/nueva";
+    }
+
+    // Elimina la categoría
     @GetMapping("/eliminar/{id}")
-    public String eliminarCategoria(@PathVariable Long id) {
-        categoriaService.eliminar(id);
-        return "redirect:/";
+    public String eliminarCategoria(@PathVariable Integer id) {
+        try {
+            categoriaService.eliminarCategoria(id); 
+        } catch (Exception e) {
+            System.out.println("Error al eliminar: " + e.getMessage());
+        }
+        return "redirect:/categoria/nueva";
     }
 }

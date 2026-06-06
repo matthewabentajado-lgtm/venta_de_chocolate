@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>ChocoStore - Inventario de Chocolates</title>
+    <link th:href="@{https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css}" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand text-warning fw-bold" th:href="@{/}">🍫 ChocoStore</a>
+            <div class="navbar-nav">
+                <a class="nav-link active" th:href="@{/nuevo}">Inventario Chocolates</a>
+                <a class="nav-link" th:href="@{/categoria/nueva}">Categorías</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid px-4"> 
+        <div class="row">
+            
+            <div class="col-md-3 mb-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header text-white" th:classappend="${chocolate.id != null} ? 'bg-warning text-dark' : 'bg-primary'">
+                        <h5 class="card-title mb-0" th:text="${chocolate.id != null} ? 'Modificar Chocolate' : 'Agregar Chocolate'"></h5>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/guardar}" th:object="${chocolate}" method="POST">
+                            
+                            <input type="hidden" th:field="*{id}" />
+
+                            <div class="mb-3">
+                                <label class="form-label">Nombre del Producto</label>
+                                <input type="text" th:field="*{nombre}" class="form-control" required placeholder="Ej: Barra Suiza" autofocus>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Marca</label>
+                                <input type="text" th:field="*{marca}" class="form-control" required placeholder="Ej: Lindt, Milka...">
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Precio ($)</label>
+                                    <input type="number" step="0.01" th:field="*{precio}" class="form-control" required placeholder="0.00">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Categoría</label>
+                                    <select th:field="*{categoria}" class="form-select" required>
+                                        <option value="" disabled selected>Seleccione...</option>
+                                        <option th:each="cat : ${categorias}" th:value="${cat.id}" th:text="${cat.nombre}"></option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">URL de la Imagen</label>
+                                <input type="url" th:field="*{imagen}" class="form-control" placeholder="https://ejemplo.com/foto.jpg">
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-success">Guardar Chocolate</button>
+                                <a th:href="@{/nuevo}" class="btn btn-secondary" th:if="${chocolate.id != null}">Cancelar Edición</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="card-title mb-0">Inventario de Chocolates</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-striped table-hover mb-0 align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>N°</th>
+                                    <th>Imagen</th>
+                                    <th>Nombre</th>
+                                    <th>Marca</th>
+                                    <th>Precio</th>
+                                    <th>Categoría</th>
+                                    <th class="text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="choc, iterStat : ${chocolates}">
+                                    <td th:text="${iterStat.count}">1</td>
+                                    
+                                    <td>
+                                        <img th:src="${choc.imagen != null && choc.imagen != '' ? choc.imagen : 'https://via.placeholder.com/50'}" 
+                                             alt="Foto" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
+                                    </td>
+                                    
+                                    <td th:text="${choc.nombre}" class="fw-bold">Nombre</td>
+                                    <td th:text="${choc.marca}">Marca</td>
+                                    <td th:text="'$' + ${#numbers.formatDecimal(choc.precio, 1, 2)}">$0.00</td>
+                                    <td th:text="${choc.categoria != null ? choc.categoria.nombre : 'Sin Categoría'}">Categoría</td>
+                                    
+                                    <td class="text-center">
+                                        <a th:href="@{/editar/{id}(id=${choc.id})}" class="btn btn-warning btn-sm me-1">Editar</a>
+                                        <a th:href="@{/eliminar/{id}(id=${choc.id})}" class="btn btn-danger btn-sm" 
+                                           onclick="return confirm('¿Estás seguro de eliminar este producto?');">Eliminar</a>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(chocolates)}">
+                                    <td colspan="7" class="text-center text-muted py-3">No hay productos en stock.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+</body>
+</html>
